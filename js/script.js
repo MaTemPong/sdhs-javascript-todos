@@ -5,11 +5,13 @@ const setLocal = (data) => localStorage.setItem('todoList', JSON.stringify(data)
 const todoInput = document.querySelector('.new-todo');
 const clearCompletedBtn = document.querySelector('.clear-completed');
 const todoCount = document.querySelector(".todo-count>strong");
+const toggleAll = document.querySelector(".toggle-all")
 const filters = document.querySelectorAll(".filters a")
 let todoListWrap = document.querySelector('.todo-list');
 let todoList = [];
 let filterTodoList = [];
 let currentURL = "";
+
 todoInput.addEventListener('keydown', (e) => {
   if(!todoInput.value) return;
   if(e.key === 'Enter'){
@@ -24,10 +26,12 @@ todoInput.addEventListener('keydown', (e) => {
   }
 });
 
-filters.forEach((item, index) => {
+filters.forEach((item, index, arr) => {
   item.addEventListener('click', ()=>{
+    arr.forEach((item)=>{item.classList.remove('selected')})
     currentURL = item.href.split("#/")[1];
     reloadTodo();
+    item.classList.add('selected');
   })
 });  
 
@@ -37,6 +41,9 @@ clearCompletedBtn.addEventListener('click', ()=>{
   reloadTodo();
 })
 
+toggleAll.addEventListener('change', ()=> {
+  reloadTodo(); 
+})
 
 reloadTodo(); 
 
@@ -50,6 +57,8 @@ function reloadTodo(){
   } else if(currentURL === "active"){
     filterTodoList = todoList.filter((todo) => !todo.isSelected)
   }
+  if(toggleAll.checked) filterTodoList = [];
+
   todoListWrap.replaceChildren();
   if(filterTodoList != null){
     for(let i = 0; i < filterTodoList.length; i++){
